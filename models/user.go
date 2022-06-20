@@ -1,6 +1,7 @@
 package models
 
 type User struct {
-	Name  string `json:"name"`
-	Email string `json:"email"`
+	tableName struct{} `pg:"server_user"`
+	Name      string   `json:"name"`
+	Email     string   `json:"email"`
 }

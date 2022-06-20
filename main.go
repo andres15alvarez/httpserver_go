@@ -12,7 +12,7 @@ func main() {
 	utils.InitEnvironment()
 	server := utils.NewServer(":" + os.Getenv("PORT"))
 	server.Handle("GET", "/", server.AddMiddleware(handlers.Home, middlewares.Logger()))
-	server.Handle("POST", "/user", server.AddMiddleware(handlers.CreateUser, middlewares.CheckAuth(), middlewares.Logger()))
-	server.Handle("GET", "/user", server.AddMiddleware(handlers.GetUsers, middlewares.CheckAuth(), middlewares.Logger()))
+	server.Handle("POST", "/user", server.AddMiddleware(handlers.CreateUser, middlewares.Logger()))
+	server.Handle("GET", "/user", server.AddMiddleware(handlers.ListUsers, middlewares.CheckAuth(), middlewares.Logger()))
 	server.Listen()
 }

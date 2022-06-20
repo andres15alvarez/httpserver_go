@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -14,6 +13,5 @@ func ConnectDB() *pg.DB {
 		log.Fatal(err)
 	}
 	db := pg.Connect(options)
-	fmt.Println("Database connected")
 	return db
 }
