@@ -1,12 +1,14 @@
-package main
+package handlers
 
 import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"github.com/andres15alvarez/go_http_server/models"
 )
 
-var users []User = []User{
+var users []models.User = []models.User{
 	{
 		Name:  "John Doe",
 		Email: "johndoe@example.com",
@@ -21,19 +23,14 @@ var users []User = []User{
 	},
 }
 
-func HandlerHome(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(Home{"Hello, World"})
-}
-
-func HandlerGetUsers(w http.ResponseWriter, r *http.Request) {
+func GetUsers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(users)
 }
 
-func HandlerCreateUser(w http.ResponseWriter, r *http.Request) {
+func CreateUser(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
-	var user User
+	var user models.User
 	err := decoder.Decode(&user)
 	if err != nil {
 		fmt.Fprintf(w, "Error: %v", err)

@@ -1,4 +1,4 @@
-package main
+package utils
 
 import (
 	"log"
@@ -6,7 +6,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func InitEnv() {
+func InitEnvironment() {
 	err := godotenv.Load(".env")
 	if err != nil {
 		log.Print("Error loading .env file")

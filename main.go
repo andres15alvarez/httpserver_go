@@ -1,22 +1,18 @@
 package main
 
 import (
-	"context"
-	"log"
 	"os"
+
+	"github.com/andres15alvarez/go_http_server/handlers"
+	"github.com/andres15alvarez/go_http_server/middlewares"
+	"github.com/andres15alvarez/go_http_server/utils"
 )
 
 func main() {
-	InitEnv()
-	db := ConnectDB()
-	ctx := context.Background()
-	_, err := db.ExecContext(ctx, "SELECT 1")
-	if err != nil {
-		log.Fatal(err)
-	}
-	server := NewServer(":" + os.Getenv("PORT"))
-	server.Handle("GET", "/", server.AddMiddleware(HandlerHome, Logger()))
-	server.Handle("POST", "/user", server.AddMiddleware(HandlerCreateUser, CheckAuth(), Logger()))
-	server.Handle("GET", "/user", server.AddMiddleware(HandlerGetUsers, CheckAuth(), Logger()))
+	utils.InitEnvironment()
+	server := utils.NewServer(":" + os.Getenv("PORT"))
+	server.Handle("GET", "/", server.AddMiddleware(handlers.Home, middlewares.Logger()))
+	server.Handle("POST", "/user", server.AddMiddleware(handlers.CreateUser, middlewares.CheckAuth(), middlewares.Logger()))
+	server.Handle("GET", "/user", server.AddMiddleware(handlers.GetUsers, middlewares.CheckAuth(), middlewares.Logger()))
 	server.Listen()
 }

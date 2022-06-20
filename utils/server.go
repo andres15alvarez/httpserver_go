@@ -1,4 +1,4 @@
-package main
+package utils
 
 import (
 	"fmt"
@@ -6,23 +6,23 @@ import (
 )
 
 type Server struct {
-	port   string
-	router *Router
+	Port   string
+	Router *Router
 }
 
 func NewServer(port string) *Server {
 	return &Server{
-		port:   port,
-		router: NewRouter(),
+		Port:   port,
+		Router: NewRouter(),
 	}
 }
 
 func (s *Server) Handle(method string, path string, handler http.HandlerFunc) {
-	_, exist := s.router.rules[path]
+	_, exist := s.Router.Rules[path]
 	if !exist {
-		s.router.rules[path] = make(map[string]http.HandlerFunc)
+		s.Router.Rules[path] = make(map[string]http.HandlerFunc)
 	}
-	s.router.rules[path][method] = handler
+	s.Router.Rules[path][method] = handler
 }
 
 func (s *Server) AddMiddleware(f http.HandlerFunc, middlewares ...Middleware) http.HandlerFunc {
@@ -33,9 +33,9 @@ func (s *Server) AddMiddleware(f http.HandlerFunc, middlewares ...Middleware) ht
 }
 
 func (s *Server) Listen() error {
-	http.Handle("/", s.router)
-	fmt.Printf("Server running in port %s\n", s.port)
-	err := http.ListenAndServe(s.port, nil)
+	http.Handle("/", s.Router)
+	fmt.Printf("Server running in port %s\n", s.Port)
+	err := http.ListenAndServe(s.Port, nil)
 	if err != nil {
 		return err
 	} else {
