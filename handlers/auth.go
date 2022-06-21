@@ -8,34 +8,33 @@ import (
 
 	"github.com/andres15alvarez/go_http_server/models"
 	"github.com/andres15alvarez/go_http_server/repositories"
+	"github.com/andres15alvarez/go_http_server/utils"
 )
 
-func ListUsers(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	usersDB, err := repositories.ListUsers()
-	if err != nil {
-		log.Printf(err.Error())
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	json.NewEncoder(w).Encode(usersDB)
-}
-
-func CreateUser(w http.ResponseWriter, r *http.Request) {
+func SignIn(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
-	var user models.User
+	var user models.SignIn
 	err := decoder.Decode(&user)
 	if err != nil {
 		fmt.Fprintf(w, "Error: %v", err)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	userCreated, err := repositories.CreateUser(user)
+	userFound, err := repositories.GetUserByEmail(user.Email)
 	if err != nil {
 		log.Printf(err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+	if !utils.CheckPasswordHash(user.Password, userFound.Password) {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+	token, err := utils.GenerateToken(userFound)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(userCreated)
+	json.NewEncoder(w).Encode(models.Token{Token: token})
 }
